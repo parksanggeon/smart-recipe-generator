@@ -14,7 +14,7 @@ const Chip = ({ ingredient, onDelete }: { ingredient: Ingredient; onDelete: (id:
     return (
         <div className="flex items-center bg-indigo-500 text-white text-sm font-medium px-3 py-1.5 rounded-full m-1">
             <span>{`${ingredient.name}${ingredient.quantity ? ` (${ingredient.quantity})` : ''}`}</span>
-            <button onClick={() => onDelete(ingredient.id)} className="ml-2 focus:outline-none">
+            <button onClick={() => onDelete(ingredient.id as string)} className="ml-2 focus:outline-none">
                 <XMarkIcon className="w-4 h-4 text-white hover:text-gray-200" />
             </button>
         </div>
@@ -40,7 +40,7 @@ function IngredientList({ ingredientList, ingredientUpdate, generatedRecipes }: 
 
     const handleSelectedIngredient = (ingredient: ComboIngredient) => {
         setSelectedIngredient(initialComboIngredient);
-        ingredientUpdate(ingredient?.name);
+        ingredientUpdate(ingredient.name); // ingredient.name만 넘기도록 수정
     };
 
     return (
@@ -65,7 +65,7 @@ function IngredientList({ ingredientList, ingredientUpdate, generatedRecipes }: 
                     </ComboboxButton>
                 </div>
 
-                {filteredIngredients.length > 0 && (
+                {filteredIngredients?.length > 0 && (
                     <ComboboxOptions
                         className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
                     >
@@ -122,7 +122,7 @@ export default function IngredientForm({
     const [error, setError] = useState<string | null>(null);
 
     const handleChange = (val: string | undefined) => {
-        if (!val) return;
+        if (!val || val.trim() === '') return;
         const isRepeat = ingredients.some(
             (i) => i.name.toLowerCase() === val.toLowerCase()
         );
@@ -130,19 +130,16 @@ export default function IngredientForm({
             setError('This ingredient is already selected.');
             return;
         }
-        if(ingredients.length >= 10){
+        if (ingredients.length >= 10) {
             setError('You can select up to 10 ingredients only.');
-            return
+            return;
         }
         setError(null);
-        updateIngredients([
-            ...ingredients,
-            { name: val, id: uuidv4() },
-        ]);
+        updateIngredients([ ...ingredients, { name: val, id: uuidv4() } ]);
     };
 
     const deleteIngredient = (id: string) => {
-        if (Boolean(generatedRecipes.length)) return;
+        if (generatedRecipes.length > 0) return;
         updateIngredients(ingredients.filter((ingredient) => ingredient.id !== id));
     };
 
@@ -151,7 +148,6 @@ export default function IngredientForm({
             className="fixed top-36 mt-32 pl-2 left-1/2 transform -translate-x-1/2 px-4 py-6 bg-white shadow-md rounded-xl sm:max-w-md mx-auto"
             style={{ width: '98%' }}
         >
-            {/* Enhanced "Add New Ingredient" Button */}
             <div className="flex justify-end w-full">
                 <NewIngredientDialog
                     ingredientList={ingredientList}
