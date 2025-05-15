@@ -34,7 +34,7 @@ export const updateRecipeList = (
     : oldList.filter(recipe => recipe._id !== id);
 };
 
-// 서버사이드 렌더링용 데이터 요청 + 인증 체크
+// 서버사이드 렌더링용 데이터 요청 + 인증 체크  
 export const getServerSidePropsUtility = async (
   context: GetServerSidePropsContext,
   address: string,
@@ -159,14 +159,25 @@ export const paginationQueryHelper = (queryObj: PaginationQueryType) => {
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 // 재사용 가능한 재료 호출 함수 (선택)
+
 export const fetchIngredients = async () => {
   try {
-    const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+    const baseURL = process.env.BASE_URL || process.env.NEXT_PUBLIC_BASE_URL;
+
+    console.log("✅ fetchIngredients baseURL:", baseURL); // 디버깅용
+
+    if (!baseURL) {
+      throw new Error("baseURL이 정의되지 않았습니다.");
+    }
+
     const response = await axios.get(`${baseURL}/api/get-ingredients`);
     return response.data;
   } catch (error) {
-    console.error("fetchIngredients error:", error);
+    console.error("❌ fetchIngredients error:", error);
     return [];
   }
 };
+
+
+
 

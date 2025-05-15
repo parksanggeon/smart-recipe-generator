@@ -39,8 +39,13 @@ function IngredientList({ ingredientList, ingredientUpdate, generatedRecipes }: 
             );
 
     const handleSelectedIngredient = (ingredient: ComboIngredient) => {
-        setSelectedIngredient(initialComboIngredient);
-        ingredientUpdate(ingredient.name); // ingredient.name만 넘기도록 수정
+        // 안전하게 ingredient.name을 확인하고 처리
+        if (ingredient && ingredient.name) {
+            setSelectedIngredient(initialComboIngredient);
+            ingredientUpdate(ingredient.name);
+        } else {
+            console.error("Invalid ingredient:", ingredient); // ingredient가 잘못된 경우 오류 메시지 출력
+        }
     };
 
     return (
