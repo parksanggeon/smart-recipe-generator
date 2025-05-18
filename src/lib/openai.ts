@@ -13,18 +13,17 @@ import {
     getChatAssistantSystemPrompt
 } from './prompts';
 
-// Initialize OpenAI client with API key from environment
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Save OpenAI responses in the database for logging/tracking
 type SaveOpenaiResponsesType = {
     userId: string;
     prompt: string;
     response: any;
     model?: string;
 };
+
 const saveOpenaiResponses = async ({ userId, prompt, response, model }: SaveOpenaiResponsesType) => {
     try {
         await connectDB();
@@ -46,8 +45,12 @@ type ResponseType = {
     openaiPromptId: string;
 };
 
-// Generate recipes by sending a chat completion request to OpenAI using ingredients and dietary preferences
-export const generateRecipe = async (ingredients: Ingredient[], dietaryPreferences: DietaryPreference[], userId: string): Promise<ResponseType> => {
+// ✅ 수정된 generateRecipe 함수
+export const generateRecipe = async (
+    ingredients: Ingredient[],
+    dietaryPreferences: DietaryPreference[],
+    userId: string
+): Promise<ResponseType> => {
     try {
         const prompt = getRecipeGenerationPrompt(ingredients, dietaryPreferences);
         const model = 'gpt-4o';
@@ -59,15 +62,26 @@ export const generateRecipe = async (ingredients: Ingredient[], dietaryPreferenc
             }],
             max_tokens: 1500,
         });
+
         const _id = await saveOpenaiResponses({ userId, prompt, response, model });
-        return { recipes: response.choices[0].message?.content, openaiPromptId: _id || 'null-prompt-id' };
+
+        const content = response.choices[0].message?.content;
+        let parsedRecipes = null;
+
+        try {
+            parsedRecipes = JSON.parse(content || 'null');
+        } catch (e) {
+            console.error('❌ Failed to parse OpenAI recipe JSON:', e);
+            console.error('📦 Raw content:', content);
+        }
+
+        return { recipes: parsedRecipes, openaiPromptId: _id || 'null-prompt-id' };
     } catch (error) {
         console.error('Failed to generate recipe:', error);
         throw new Error('Failed to generate recipe');
     }
 };
 
-// Generate an image using DALL-E by sending an image generation prompt to OpenAI
 const generateImage = (prompt: string, model: string): Promise<ImagesResponse> => {
     try {
         const response = openai.images.generate({
@@ -82,7 +96,6 @@ const generateImage = (prompt: string, model: string): Promise<ImagesResponse> =
     }
 };
 
-// Generate images for an array of recipes and return image links paired with recipe names
 export const generateImages = async (recipes: Recipe[], userId: string) => {
     try {
         const model = 'dall-e-3';
@@ -96,7 +109,6 @@ export const generateImages = async (recipes: Recipe[], userId: string) => {
             response: images,
             model
         });
-        // Map each image response to its corresponding recipe name
         const imagesWithNames = images.map((imageResponse, idx) => ({
             imgLink: imageResponse.data[0].url,
             name: recipes[idx].name,
@@ -108,7 +120,6 @@ export const generateImages = async (recipes: Recipe[], userId: string) => {
     }
 };
 
-// Validate an ingredient name by sending a prompt to OpenAI and returning its response
 export const validateIngredient = async (ingredientName: string, userId: string): Promise<string | null> => {
     try {
         const prompt = getIngredientValidationPrompt(ingredientName);
@@ -129,7 +140,6 @@ export const validateIngredient = async (ingredientName: string, userId: string)
     }
 };
 
-// Retrieve narrated text for a recipe by sending a narration prompt to OpenAI
 const getRecipeNarration = async (recipe: ExtendedRecipe, userId: string): Promise<string | null> => {
     try {
         const prompt = getRecipeNarrationPrompt(recipe);
@@ -151,15 +161,15 @@ const getRecipeNarration = async (recipe: ExtendedRecipe, userId: string): Promi
     }
 };
 
-// Convert narrated text to speech (TTS) using OpenAI audio API and return an audio buffer
 export const getTTS = async (recipe: ExtendedRecipe, userId: string): Promise<Buffer> => {
     try {
         const text = await getRecipeNarration(recipe, userId);
         if (!text) throw new Error('Unable to get text for recipe narration');
-        // Randomly select a voice type from available options
+
         type voiceTypes = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
         const voiceChoices: voiceTypes[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
         const voice = voiceChoices[Math.floor(Math.random() * voiceChoices.length)];
+
         console.info('Getting recipe narration audio from OpenAI...');
         const model = 'tts-1';
         const mp3 = await openai.audio.speech.create({
@@ -176,7 +186,6 @@ export const getTTS = async (recipe: ExtendedRecipe, userId: string): Promise<Bu
     }
 };
 
-// Generate tags for a recipe by sending a tagging prompt to OpenAI and updating the recipe document in the database
 export const generateRecipeTags = async (recipe: ExtendedRecipe, userId: string): Promise<undefined> => {
     try {
         const prompt = getRecipeTaggingPrompt(recipe);
@@ -218,7 +227,6 @@ export const generateRecipeTags = async (recipe: ExtendedRecipe, userId: string)
     }
 };
 
-// Generate a chat response by sending a message to OpenAI and returning the assistant's reply
 export const generateChatResponse = async (
     message: string,
     recipe: ExtendedRecipe,
@@ -242,7 +250,6 @@ export const generateChatResponse = async (
         const reply = response.choices?.[0]?.message?.content ?? 'Sorry, I had trouble responding.';
         const totalTokens = response.usage?.total_tokens ?? 0;
 
-        // Save to DB only on first message
         if (history.length === 1) {
             await saveOpenaiResponses({
                 userId,

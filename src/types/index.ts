@@ -107,3 +107,7 @@ export interface PaginationQueryType {
     sortOption?: string,
     query?: string
 }
+
+require('dotenv').config();
+
+const apiKey = process.env.OPENAI_API_KEY;

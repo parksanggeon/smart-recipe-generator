@@ -78,16 +78,28 @@ interface RESTcallTypes {
   method?: Method;
   payload?: { [key: string]: any };
 }
-
 export const call_api = async ({ address, method = 'get', payload }: RESTcallTypes) => {
   try {
-    const { data } = await axios[method](address, payload);
-    return data;
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const response =
+      method === 'get' || method === 'delete'
+        ? await axios[method](address, { ...config, params: payload })  // GET/DELETE일 땐 params
+        : await axios[method](address, payload, config);                 // POST/PUT일 땐 body
+
+    console.log(`call_api response from ${address}:`, response.data);  // <--- 여기에 로그 추가
+
+    return response.data;
   } catch (error) {
     console.error(`REST call (${method}) to ${address} failed:`, error);
     throw error;
   }
 };
+
 
 // 날짜 포맷 (예: 14 May 2025)
 export const formatDate = (date: string) => {
