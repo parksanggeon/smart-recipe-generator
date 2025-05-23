@@ -34,13 +34,10 @@ const Home = () => {
         searchTrigger,
         resetSearchTrigger: () => setSearchTrigger(false),
     });
+
     useEffect(() => {
         if (!latestRecipes.length) return;
 
-        // 🔹 TEMPORARY WORKAROUND:
-        // Instead of using a React ref, we are directly querying the DOM to attach the observer.
-        // This is because React's ref assignment is currently not triggering as expected.
-        // Once the root cause is identified, we should refactor this back to the correct React ref approach.
         const lastRecipeElement = document.querySelector(".recipe-card:last-child");
         if (!lastRecipeElement) return;
 
@@ -60,10 +57,9 @@ const Home = () => {
         return () => {
             if (observerRef.current) {
                 observerRef.current.disconnect();
-                observerRef.current = null; // Ensure observerRef is fully reset
+                observerRef.current = null;
             }
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        };
     }, [latestRecipes, loading]);
 
     const handleSearch = useCallback(() => {
@@ -71,7 +67,7 @@ const Home = () => {
 
         if (searchTimeout.current) {
             clearTimeout(searchTimeout.current);
-            searchTimeout.current = null; // Explicitly reset the timeout reference
+            searchTimeout.current = null;
         }
 
         searchTimeout.current = setTimeout(() => {
@@ -100,7 +96,7 @@ const Home = () => {
             <SearchBar searchVal={searchVal} setSearchVal={setSearchVal} handleSearch={handleSearch} totalRecipes={totalRecipes} />
             <PopularTags tags={popularTags} onTagToggle={handleTagSearch} searchVal={searchVal} />
 
-            {/* Sorting Buttons */}
+            {/* 정렬 버튼 */}
             <div className="flex space-x-4 mt-4 mb-4">
                 <button
                     onClick={() => sortRecipes('recent')}
@@ -109,7 +105,7 @@ const Home = () => {
                     disabled={Boolean(searchVal.trim())}
                 >
                     <ClockIcon className="h-5 w-5 mr-2" />
-                    Most Recent
+                    최신순
                 </button>
                 <button
                     onClick={() => sortRecipes('popular')}
@@ -118,14 +114,13 @@ const Home = () => {
                     disabled={Boolean(searchVal.trim())}
                 >
                     <FireIcon className="h-5 w-5 mr-2" />
-                    Most Popular
+                    인기순
                 </button>
             </div>
 
             <ViewRecipes recipes={latestRecipes} handleRecipeListUpdate={handleRecipeListUpdate} />
             <FloatingActionButtons />
 
-            {/* Show loading indicator when fetching */}
             {loading && <Loading />}
         </div>
     );
