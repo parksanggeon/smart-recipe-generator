@@ -4,7 +4,6 @@ import { ExtendedRecipe, PaginationQueryType } from "../types";
 import { GetServerSidePropsContext } from "next";
 import React from "react";
 
-// 레시피에 사용자 관련 정보 추가 (소유 여부, 좋아요 여부)
 export const filterResults = (recipes: ExtendedRecipe[], userId: string) => {
   return recipes.map((recipe) => ({
     ...recipe,
@@ -15,13 +14,20 @@ export const filterResults = (recipes: ExtendedRecipe[], userId: string) => {
           image: recipe.owner.image,
         }
       : null,
-    likedBy: recipe.likedBy?.map(({ _id, name, image }) => ({ _id, name, image })) ?? [],
+    likedBy: recipe.likedBy?.map(
+      (l: { _id: string; name: string; image: string }) => ({
+        _id: l._id,
+        name: l.name,
+        image: l.image,
+      })
+    ) ?? [],
     owns: recipe.owner?._id?.toString() === userId,
-    liked: recipe.likedBy?.some(l => l._id?.toString() === userId) ?? false,
+    liked: recipe.likedBy?.some(
+      (l: { _id: string }) => l._id?.toString() === userId
+    ) ?? false,
   }));
 };
 
-// 레시피 리스트 업데이트 (수정 또는 삭제 반영)
 export const updateRecipeList = (
   oldList: ExtendedRecipe[],
   newRecipe: ExtendedRecipe | null,
@@ -34,7 +40,6 @@ export const updateRecipeList = (
     : oldList.filter(recipe => recipe._id !== id);
 };
 
-// 서버사이드 렌더링용 데이터 요청 + 인증 체크  
 export const getServerSidePropsUtility = async (
   context: GetServerSidePropsContext,
   address: string,
@@ -70,7 +75,6 @@ export const getServerSidePropsUtility = async (
   }
 };
 
-// REST API 호출 유틸 (get, post, put, delete)
 type Method = 'get' | 'post' | 'put' | 'delete';
 
 interface RESTcallTypes {
@@ -78,36 +82,31 @@ interface RESTcallTypes {
   method?: Method;
   payload?: { [key: string]: any };
 }
-export const call_api = async ({ address, method = 'get', payload }: RESTcallTypes) => {
-  try {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
 
+export const call_api = async ({ address, method = 'post', payload = {} }: RESTcallTypes) => {
+  try {
+    const baseURL = process.env.BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const config = {
+      headers: { 'Content-Type': 'application/json' },
+    };
+    const url = `${baseURL}${address.startsWith('/') ? address : `/${address}`}`;
     const response =
       method === 'get' || method === 'delete'
-        ? await axios[method](address, { ...config, params: payload })  // GET/DELETE일 땐 params
-        : await axios[method](address, payload, config);                 // POST/PUT일 땐 body
-
-    console.log(`call_api response from ${address}:`, response.data);  // <--- 여기에 로그 추가
-
+        ? await axios[method](url, { ...config, params: payload })
+        : await axios[method](url, payload, config);
+    console.log(`✅ call_api response from ${url}:`, response.data);
     return response.data;
-  } catch (error) {
-    console.error(`REST call (${method}) to ${address} failed:`, error);
-    throw error;
+  } catch (error: any) {
+    console.error(`❌ REST call (${method}) to ${address} failed:`, error.response?.data || error.message);
+    throw error.response?.data || { error: error.message };
   }
 };
 
-
-// 날짜 포맷 (예: 14 May 2025)
 export const formatDate = (date: string) => {
   const [, day, mth, year] = new Date(date).toUTCString().split(' ');
   return `${day} ${mth} ${year}`;
 };
 
-// 오디오 재생 함수
 export const playAudio = async (
   audioUrl: string,
   audioRef: React.MutableRefObject<HTMLAudioElement | null>,
@@ -117,38 +116,14 @@ export const playAudio = async (
     const audio = new Audio(audioUrl);
     audio.preload = 'auto';
     audioRef.current = audio;
-
-    audio.onended = () => {
-      if (onEnd) onEnd();
-    };
-
+    audio.onended = () => { if (onEnd) onEnd(); };
     audio.load();
-
     await new Promise<void>((resolve, reject) => {
       let isResolved = false;
-
-      audio.oncanplaythrough = () => {
-        if (!isResolved) {
-          isResolved = true;
-          resolve();
-        }
-      };
-
-      audio.onerror = () => {
-        if (!isResolved) {
-          isResolved = true;
-          reject(new Error('Error loading audio'));
-        }
-      };
-
-      setTimeout(() => {
-        if (!isResolved) {
-          isResolved = true;
-          reject(new Error('Audio loading timeout'));
-        }
-      }, 20000); // 20초 타임아웃
+      audio.oncanplaythrough = () => { if (!isResolved) { isResolved = true; resolve(); } };
+      audio.onerror = () => { if (!isResolved) { isResolved = true; reject(new Error('Error loading audio')); } };
+      setTimeout(() => { if (!isResolved) { isResolved = true; reject(new Error('Audio loading timeout')); } }, 20000);
     });
-
     await audio.play();
   } catch (error: any) {
     console.error(`playAudio: Error playing audio: ${error.message}`);
@@ -156,32 +131,24 @@ export const playAudio = async (
   }
 };
 
-// 페이지네이션 파라미터 계산
 export const paginationQueryHelper = (queryObj: PaginationQueryType) => {
   const page = Number(queryObj.page) || 1;
   const limit = Number(queryObj.limit) || 12;
   const skip = (page - 1) * limit;
   const sortOption = typeof queryObj.sortOption === 'string' ? queryObj.sortOption : 'popular';
   const query = typeof queryObj.query === 'string' ? queryObj.query : undefined;
-
   return { page, limit, skip, sortOption, query };
 };
 
-// 환경변수 기반 기본 URL
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
-// 재사용 가능한 재료 호출 함수 (선택)
 
 export const fetchIngredients = async () => {
   try {
-    const baseURL = process.env.BASE_URL || process.env.NEXT_PUBLIC_BASE_URL;
-
-    console.log("✅ fetchIngredients baseURL:", baseURL); // 디버깅용
-
+    const baseURL = process.env.BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    console.log("✅ fetchIngredients baseURL:", baseURL);
     if (!baseURL) {
       throw new Error("baseURL이 정의되지 않았습니다.");
     }
-
     const response = await axios.get(`${baseURL}/api/get-ingredients`);
     return response.data;
   } catch (error) {
@@ -189,7 +156,3 @@ export const fetchIngredients = async () => {
     return [];
   }
 };
-
-
-
-

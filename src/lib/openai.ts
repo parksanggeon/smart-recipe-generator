@@ -1,3 +1,4 @@
+// lib/openai.ts
 import OpenAI from 'openai';
 import { Ingredient, DietaryPreference, Recipe, ExtendedRecipe } from '../types/index';
 import aiGenerated from '../models/aigenerated';
@@ -45,7 +46,7 @@ type ResponseType = {
     openaiPromptId: string;
 };
 
-// ✅ 수정된 generateRecipe 함수
+// generateRecipe 함수
 export const generateRecipe = async (
     ingredients: Ingredient[],
     dietaryPreferences: DietaryPreference[],
@@ -71,8 +72,8 @@ export const generateRecipe = async (
         try {
             parsedRecipes = JSON.parse(content || 'null');
         } catch (e) {
-            console.error('❌ Failed to parse OpenAI recipe JSON:', e);
-            console.error('📦 Raw content:', content);
+            console.error('Failed to parse OpenAI recipe JSON:', e);
+            console.error('Raw content:', content);
         }
 
         return { recipes: parsedRecipes, openaiPromptId: _id || 'null-prompt-id' };
@@ -82,6 +83,7 @@ export const generateRecipe = async (
     }
 };
 
+// 이미지 생성 헬퍼 함수
 const generateImage = (prompt: string, model: string): Promise<ImagesResponse> => {
     try {
         const response = openai.images.generate({
@@ -96,6 +98,7 @@ const generateImage = (prompt: string, model: string): Promise<ImagesResponse> =
     }
 };
 
+// generateImages 함수
 export const generateImages = async (recipes: Recipe[], userId: string) => {
     try {
         const model = 'dall-e-3';
@@ -105,7 +108,7 @@ export const generateImages = async (recipes: Recipe[], userId: string) => {
         const images = await Promise.all(imagePromises);
         await saveOpenaiResponses({
             userId,
-            prompt: `Image generation for recipe names ${recipes.map(r => r.name).join(' ,')} (note: not exact prompt)`,
+            prompt: `Image generation for recipe names ${recipes.map(r => r.name).join(' ,')} (not exact prompt)`,
             response: images,
             model
         });
@@ -120,6 +123,7 @@ export const generateImages = async (recipes: Recipe[], userId: string) => {
     }
 };
 
+// validateIngredient 함수
 export const validateIngredient = async (ingredientName: string, userId: string): Promise<string | null> => {
     try {
         const prompt = getIngredientValidationPrompt(ingredientName);
@@ -133,13 +137,14 @@ export const validateIngredient = async (ingredientName: string, userId: string)
             max_tokens: 800,
         });
         await saveOpenaiResponses({ userId, prompt, response, model });
-        return response.choices[0].message?.content;
+        return response.choices[0].message?.content || null;
     } catch (error) {
         console.error('Failed to validate ingredient:', error);
         throw new Error('Failed to validate ingredient');
     }
 };
 
+// getRecipeNarration 함수
 const getRecipeNarration = async (recipe: ExtendedRecipe, userId: string): Promise<string | null> => {
     try {
         const prompt = getRecipeNarrationPrompt(recipe);
@@ -154,13 +159,14 @@ const getRecipeNarration = async (recipe: ExtendedRecipe, userId: string): Promi
             max_tokens: 1500,
         });
         const _id = await saveOpenaiResponses({ userId, prompt, response, model });
-        return response.choices[0].message?.content;
+        return response.choices[0].message?.content || null;
     } catch (error) {
         console.error('Failed to generate recipe narration:', error);
         throw new Error('Failed to generate recipe narration');
     }
 };
 
+// getTTS 함수
 export const getTTS = async (recipe: ExtendedRecipe, userId: string): Promise<Buffer> => {
     try {
         const text = await getRecipeNarration(recipe, userId);
@@ -186,6 +192,7 @@ export const getTTS = async (recipe: ExtendedRecipe, userId: string): Promise<Bu
     }
 };
 
+// generateRecipeTags 함수
 export const generateRecipeTags = async (recipe: ExtendedRecipe, userId: string): Promise<undefined> => {
     try {
         const prompt = getRecipeTaggingPrompt(recipe);
@@ -227,6 +234,7 @@ export const generateRecipeTags = async (recipe: ExtendedRecipe, userId: string)
     }
 };
 
+// generateChatResponse 함수
 export const generateChatResponse = async (
     message: string,
     recipe: ExtendedRecipe,
