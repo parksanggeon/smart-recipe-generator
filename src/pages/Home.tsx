@@ -38,7 +38,10 @@ const Home = () => {
     useEffect(() => {
         if (!latestRecipes.length) return;
 
+<<<<<<< HEAD
         // 마지막 레시피 요소를 관찰하여 자동 로딩
+=======
+>>>>>>> recover-branch
         const lastRecipeElement = document.querySelector(".recipe-card:last-child");
         if (!lastRecipeElement) return;
 
@@ -101,12 +104,15 @@ const Home = () => {
                 totalRecipes={totalRecipes}
             />
 
+<<<<<<< HEAD
             <PopularTags
                 tags={popularTags}
                 onTagToggle={handleTagSearch}
                 searchVal={searchVal}
             />
 
+=======
+>>>>>>> recover-branch
             {/* 정렬 버튼 */}
             <div className="flex space-x-4 mt-4 mb-4">
                 <button
@@ -142,7 +148,10 @@ const Home = () => {
 
             <FloatingActionButtons />
 
+<<<<<<< HEAD
             {/* 로딩 중 표시 */}
+=======
+>>>>>>> recover-branch
             {loading && <Loading />}
         </div>
     );
