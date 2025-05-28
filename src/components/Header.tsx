@@ -6,15 +6,16 @@ import { signOut } from 'next-auth/react';
 import Notifications from './Notifications';
 
 const userNavigation = [
-    { name: 'Your Profile', route: '/Profile' },
-    { name: 'Sign out', route: '/auth/signout' },
+    { name: '내 프로필', route: '/Profile' },
+    { name: '로그아웃', route: '/auth/signout' },
 ]
 
 const navigation = [
-    { name: 'Home', route: '/Home', style: 'text-gray-300 hover:bg-green-700 hover:text-white' },
-    { name: 'Create Recipes', route: '/CreateRecipe', style: 'bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition-all animate-pulse' },
-    { name: 'About', route: '/', style: 'text-gray-300 hover:bg-green-700 hover:text-white' },
+    { name: '홈', route: '/Home', style: 'text-gray-300 hover:bg-green-700 hover:text-white' },
+    { name: '레시피 만들기', route: '/CreateRecipe', style: 'bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition-all animate-pulse' },
+    { name: '소개', route: '/', style: 'text-gray-300 hover:bg-green-700 hover:text-white' },
 ]
+
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
@@ -38,7 +39,7 @@ function Header({ user }: HeaderProps) {
             return
         }
         if (menu.name === 'About') {
-            window.open('https://github.com/Dereje1/smart-recipe-generator', '_blank');
+            window.open('https://github.com/parksanggeon/smart-recipe-generator', '_blank');
         }
         router.push(menu.route)
     }
@@ -90,7 +91,7 @@ function Header({ user }: HeaderProps) {
                                         rel="noopener noreferrer"
                                         className="ml-4 bg-amber-500 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-300 transition"
                                     >
-                                        ☕ Buy Me a Coffee
+                                        ☕ 커피 한 잔 부탁해요
                                     </a>
                                     {/* Profile dropdown */}
                                     <Menu as="div" className="relative ml-3">
@@ -169,7 +170,7 @@ function Header({ user }: HeaderProps) {
                                 rel="noopener noreferrer"
                                 className="bg-amber-500 text-white font-bold px-4 py-2 rounded-lg shadow-sm hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-300 transition"
                             >
-                                ☕ Buy Me a Coffee
+                                ☕ 커피 한 잔 부탁해요
                             </a>
                         </div>
                         <div className="border-t border-green-700 pb-3 pt-4">

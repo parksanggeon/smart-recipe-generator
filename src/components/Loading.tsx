@@ -1,45 +1,45 @@
 import { useEffect, useState } from 'react';
 
 const generationMessages = [
-    '🔪 Chopping up some fresh ingredients...',
-    '🥘 Stirring the pot with expert precision...',
-    '🍳 Heating the pan to the perfect temperature...',
-    '🧂 Adding a pinch of magic (and salt)...',
-    '🍅 Tossing in the tomatoes—watch out for splashes!',
-    '🔥 Turning up the heat for that perfect sear...',
-    '🧁 Sprinkling in some creativity and flavor...',
-    '🍽️ Plating the dish like a Michelin-star chef...',
-    '🥄 Taste-testing... hmm, needs just a little more zest!',
-    '🧑‍🍳 Adjusting the seasoning like a pro...',
-    '🥖 Tearing up some fresh bread for the side...',
-    '🍋 Squeezing in a bit of citrus for balance...',
-    '🍷 Deglazing the pan with a splash of wine...',
-    '🌀 Blending flavors together into something amazing...',
-    '💡 A spark of inspiration—trying a new twist on the recipe!',
-    '🌿 Garnishing with a touch of fresh herbs...',
-    '⏳ Giving it time to simmer and develop rich flavors...',
-    '🎨 Perfecting the presentation—food is art, after all!',
-    '📸 Snapping a pic before serving—this one’s a beauty!',
-    '🥢 Arranging everything just right before the final reveal...',
+    '🔪 신선한 재료를 썰고 있어요...',
+    '🥘 전문가처럼 냄비를 저어요...',
+    '🍳 완벽한 온도로 팬을 달구고 있어요...',
+    '🧂 마법 같은 소금 한 꼬집을 더해요...',
+    '🍅 토마토를 넣고 있어요—튀지 않게 조심하세요!',
+    '🔥 완벽한 시어링을 위해 불을 올려요...',
+    '🧁 창의력과 맛을 살짝 뿌려요...',
+    '🍽️ 미슐랭 셰프처럼 플레이팅 중이에요...',
+    '🥄 맛을 테스트 중이에요... 약간 더 감칠맛이 필요해요!',
+    '🧑‍🍳 전문가처럼 간을 조절하고 있어요...',
+    '🥖 신선한 빵을 찢어 곁들여요...',
+    '🍋 균형을 맞추기 위해 레몬즙을 조금 짜요...',
+    '🍷 팬에 와인을 넣어 맛을 더해요...',
+    '🌀 맛을 하나로 잘 섞고 있어요...',
+    '💡 새로운 레시피 아이디어가 떠올랐어요!',
+    '🌿 신선한 허브로 고명을 올려요...',
+    '⏳ 맛이 우러나도록 천천히 끓이고 있어요...',
+    '🎨 플레이팅을 완성해요—음식도 예술이니까요!',
+    '📸 서빙 전에 사진을 찍어요—이 요리는 정말 예뻐요!',
+    '🥢 마지막 준비를 위해 하나하나 정리 중이에요...',
 ];
 
 const savingMessages = [
-    '🖼️ Generating beautiful images for your recipe...', // OpenAI image generation
-    '🚀 Fetching the perfect visuals from AI...', // OpenAI image retrieval
-    '📤 Uploading your recipe images to the cloud...', // Uploading to S3
-    '☁️ Storing images securely on our servers...', // Confirming image storage
-    '📝 Preparing your recipe details...', // Recipe structuring before saving
-    '💾 Saving your recipe to your personal cookbook...', // Database save
-    '📑 Finalizing everything and making it just right...', // Final processing
+    '🖼️ 레시피에 어울리는 멋진 이미지를 만들고 있어요...',
+    '🚀 AI에서 완벽한 이미지를 불러오고 있어요...',
+    '📤 레시피 이미지를 클라우드에 업로드 중이에요...',
+    '☁️ 이미지를 안전하게 서버에 저장하고 있어요...',
+    '📝 레시피 정보를 준비하고 있어요...',
+    '💾 레시피를 내 요리책에 저장하고 있어요...',
+    '📑 모든 것을 마무리하며 완벽하게 정리 중이에요...',
 ];
 
-const finalGenerationMessage = '🍳 Finalizing your recipe... hold tight, flavor takes time!';
-const finalSavingMessage = '🔄 Putting it all together... fetching images, saving your recipe, and making sure everything is perfect!';
+const finalGenerationMessage = '🍳 레시피 마무리 중이에요... 잠시만 기다려주세요!';
+const finalSavingMessage = '🔄 모든 것을 합치고 있어요... 이미지 불러오기, 저장, 완벽하게 만들기!';
 
 const Loading = ({
     isComplete = false,
     isProgressBar = false,
-    loadingType = 'generation', // Default to recipe generation
+    loadingType = 'generation', // 기본값은 레시피 생성
 }: {
     isComplete?: boolean;
     isProgressBar?: boolean;
@@ -55,7 +55,7 @@ const Loading = ({
 
         if (isComplete) {
             setProgress(100);
-            setCurrentMessage('✅ Your recipe is ready!');
+            setCurrentMessage('✅ 레시피가 완성되었어요!');
             return;
         }
 
@@ -77,12 +77,12 @@ const Loading = ({
 
                 return Math.min(newProgress, 90);
             });
-        }, 1000); // Update every second
+        }, 1000); // 1초마다 업데이트
 
         return () => clearInterval(interval);
     }, [isComplete, isProgressBar, loadingType]);
 
-    // 🚀 Responsive Progress Bar
+    // 🚀 반응형 진행 바
     if (isProgressBar) {
         return (
             <div className="flex flex-col items-center justify-center mt-5 px-4 w-full">
@@ -102,12 +102,12 @@ const Loading = ({
                 <p className="mt-4 text-lg font-semibold text-gray-800 animate-pulse text-center px-2">
                     {currentMessage}
                 </p>
-                <p className="mt-1 text-sm text-gray-500">{progress}% completed</p>
+                <p className="mt-1 text-sm text-gray-500">{progress}% 완료</p>
             </div>
         );
     }
 
-    // Default Spinner for Other Scenarios
+    // 기본 스피너
     return (
         <div className="flex items-center justify-center mt-5">
             <div className="relative">

@@ -47,8 +47,9 @@ export default function DietaryPreferences({
     >
       {/* Enhanced Title */}
       <h2 className="text-xl font-medium text-gray-800 mb-4 sm:text-2xl">
-        Dietary Preferences
+        식단 선호도
       </h2>
+
 
       {/* "No Preference" Option */}
       <div className="flex items-center mb-4">
@@ -58,11 +59,12 @@ export default function DietaryPreferences({
           className={`h-5 w-5 rounded border border-gray-300 flex items-center justify-center ${noPreference ? 'bg-indigo-600' : 'bg-white'
             } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
           disabled={Boolean(generatedRecipes.length)}
-          aria-label="No Dietary Preference"
+          aria-label="식단 선호 없음"
+
         >
           {noPreference && <CheckIcon className="h-3 w-3 text-white" />}
         </Checkbox>
-        <span className="ml-3 text-gray-700">No Preference</span>
+        <span className="ml-3 text-gray-700">선호 없음</span>
       </div>
 
       <hr className="mb-4" />
