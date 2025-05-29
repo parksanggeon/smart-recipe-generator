@@ -11,68 +11,49 @@ import ErrorPage from './auth/error';
 
 // Navigation links for the header
 const navigation = [
-    { name: 'Product', key: 'product' },
-    { name: 'Features', key: 'features' },
-    { name: 'About', key: 'about' },
+    { name: '제품', key: 'product' },
+    { name: '특징', key: 'features' },
+    { name: '소개', key: 'about' },
 ];
 
 export default function Hero() {
-    // State to manage the mobile menu open/close state
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    // State to manage the currently selected page
     const [selectedPage, setSelectedPage] = useState<string | null>(null);
-
-    // Fetch the current session and status
     const { data: session, update } = useSession();
 
-    // Function to render the content based on the selected page
     const renderContent = () => {
         switch (selectedPage) {
             case 'product':
-                return (
-                    <Product resetPage={() => setSelectedPage(null)} />
-                );
+                return <Product resetPage={() => setSelectedPage(null)} />;
             case 'features':
-                return (
-                    <Features resetPage={() => setSelectedPage(null)} />
-                );
+                return <Features resetPage={() => setSelectedPage(null)} />;
             case 'about':
                 window.open('https://github.com/Dereje1/smart-recipe-generator', '_blank');
                 setSelectedPage(null);
-                return (
-                    <Landing />
-                );
+                return <Landing />;
             default:
-                return (
-                    <Landing />
-                );
+                return <Landing />;
         }
     };
 
-    // Ensures the user does not navigate to the sign-in page if a valid session exists.
-    // If a session is already active, it updates the client state instead of prompting sign-in.
-    // Otherwise, it initiates the sign-in process.
-
     const onAuthenticate = async () => {
-        const sessionIsValid = await getSession()
+        const sessionIsValid = await getSession();
         if (!sessionIsValid) {
-            signIn('google')
-            return
+            signIn('google');
+            return;
         }
-        update()
-    }
+        update();
+    };
 
-    // If the user is logged in, show the error page
-    if (session) return <ErrorPage message='Inaccessible Page' />;
+    if (session) return <ErrorPage message='접근할 수 없는 페이지입니다' />;
 
     return (
         <div className="bg-white">
-            {/* Header section */}
             <header className="absolute inset-x-0 top-0 z-50">
                 <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
                     <div className="flex lg:flex-1">
                         <a href="#" className="-m-1.5 p-1.5">
-                            <span className="sr-only">Smart Recipe Generator</span>
+                            <span className="sr-only">스마트 레시피 생성기</span>
                             <Image src="/logo.svg" alt="Smart Recipe Generator Logo" width={75} height={75} />
                         </a>
                     </div>
@@ -82,7 +63,7 @@ export default function Hero() {
                             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
                             onClick={() => setMobileMenuOpen(true)}
                         >
-                            <span className="sr-only">Open main menu</span>
+                            <span className="sr-only">메인 메뉴 열기</span>
                             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
                         </button>
                     </div>
@@ -99,17 +80,16 @@ export default function Hero() {
                     </div>
                     <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                         <button className="text-sm font-semibold leading-6 text-gray-900" onClick={onAuthenticate}>
-                            Log in With Google <span aria-hidden="true">&rarr;</span>
+                            Google 계정으로 로그인 <span aria-hidden="true">&rarr;</span>
                         </button>
                     </div>
                 </nav>
-                {/* Mobile menu dialog */}
                 <Dialog className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
                     <div className="fixed inset-0 z-50" />
                     <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
                         <div className="flex items-center justify-between">
                             <a href="#" className="-m-1.5 p-1.5">
-                                <span className="sr-only">Smart Recipe Generator</span>
+                                <span className="sr-only">스마트 레시피 생성기</span>
                                 <Image src="/logo.svg" alt="Smart Recipe Generator Logo" width={75} height={75} />
                             </a>
                             <button
@@ -117,7 +97,7 @@ export default function Hero() {
                                 className="-m-2.5 rounded-md p-2.5 text-gray-700"
                                 onClick={() => setMobileMenuOpen(false)}
                             >
-                                <span className="sr-only">Close menu</span>
+                                <span className="sr-only">메뉴 닫기</span>
                                 <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                             </button>
                         </div>
@@ -142,7 +122,7 @@ export default function Hero() {
                                         className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 w-full text-left"
                                         onClick={onAuthenticate}
                                     >
-                                        Log in With Google
+                                        Google 계정으로 로그인
                                     </button>
                                 </div>
                             </div>
@@ -151,7 +131,6 @@ export default function Hero() {
                 </Dialog>
             </header>
 
-            {/* Main content section */}
             <div className="relative isolate px-6 pt-14 lg:px-8">
                 <div
                     className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
@@ -168,10 +147,10 @@ export default function Hero() {
                 <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
                     <div className="hidden sm:mb-8 sm:flex sm:justify-center">
                         <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
-                            Discover our new AI-powered recipe generator.{' '}
+                            새로운 AI 기반 레시피 생성기를 만나보세요.{' '}
                             <a href="https://github.com/Dereje1/smart-recipe-generator" className="font-semibold text-indigo-600">
                                 <span className="absolute inset-0" aria-hidden="true" />
-                                Learn more <span aria-hidden="true">&rarr;</span>
+                                자세히 보기 <span aria-hidden="true">&rarr;</span>
                             </a>
                         </div>
                     </div>

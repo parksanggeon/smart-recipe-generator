@@ -28,7 +28,7 @@ const RecipeCard = ({ recipe, handleRecipeSelection, selectedRecipes, showSwitch
             ${showSwitch ? 'cursor-pointer' : ''}
         `}
                         onClick={() => showSwitch && setIsExpanded(!isExpanded)}
-                        title={!showSwitch ? recipe.name : ''} // Tooltip for non-switch titles
+                        title={!showSwitch ? recipe.name : ''}
                     >
                         {recipe.name}
                     </div>
@@ -48,7 +48,7 @@ const RecipeCard = ({ recipe, handleRecipeSelection, selectedRecipes, showSwitch
                 transition-colors duration-200 ease-in-out focus:outline-none
             `}
                         >
-                            <span className="sr-only">Use setting</span>
+                            <span className="sr-only">설정 사용</span>
                             <span
                                 aria-hidden="true"
                                 className={`
@@ -62,9 +62,8 @@ const RecipeCard = ({ recipe, handleRecipeSelection, selectedRecipes, showSwitch
                     )}
                 </div>
 
-
                 {/* === Ingredients Section === */}
-                <h3 className="text-gray-700 font-semibold text-lg">Ingredients:</h3>
+                <h3 className="text-gray-700 font-semibold text-lg">재료:</h3>
                 <ul className="mb-4 flex flex-wrap gap-2">
                     {recipe.ingredients.map((ingredient) => (
                         <li key={ingredient.name}>
@@ -76,7 +75,7 @@ const RecipeCard = ({ recipe, handleRecipeSelection, selectedRecipes, showSwitch
                 </ul>
 
                 {/* === Dietary Preferences === */}
-                <h3 className="text-gray-700 font-semibold text-lg">Dietary Preference:</h3>
+                <h3 className="text-gray-700 font-semibold text-lg">식단 선호도:</h3>
                 <div className="mb-5 mt-2 flex flex-wrap gap-2">
                     {recipe.dietaryPreference.map((preference) => (
                         <span
@@ -93,7 +92,7 @@ const RecipeCard = ({ recipe, handleRecipeSelection, selectedRecipes, showSwitch
                     {({ open }) => (
                         <>
                             <DisclosureButton className="flex justify-between w-full px-4 py-2 text-lg font-semibold text-left text-indigo-900 bg-indigo-100 rounded-lg hover:bg-indigo-200 focus:outline-none">
-                                <span>Instructions</span>
+                                <span>조리 방법</span>
                                 <ChevronDownIcon className={`w-5 h-5 transform transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
                             </DisclosureButton>
 
@@ -104,7 +103,7 @@ const RecipeCard = ({ recipe, handleRecipeSelection, selectedRecipes, showSwitch
                                 <ol className="list-decimal ml-5 space-y-2">
                                     {recipe.instructions.map((instruction, idx) => (
                                         <li key={idx}>
-                                            {instruction.replace(/^\d+\.\s*/, '')} {/* Remove any manual numbering */}
+                                            {instruction.replace(/^\d+\.\s*/, '')}
                                         </li>
                                     ))}
                                 </ol>
@@ -118,7 +117,7 @@ const RecipeCard = ({ recipe, handleRecipeSelection, selectedRecipes, showSwitch
                     {({ open }) => (
                         <>
                             <DisclosureButton className="flex justify-between w-full px-4 py-2 text-lg font-semibold text-left text-indigo-900 bg-indigo-100 rounded-lg hover:bg-indigo-200 focus:outline-none">
-                                <span>Additional Information</span>
+                                <span>추가 정보</span>
                                 <ChevronDownIcon className={`w-5 h-5 transform transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
                             </DisclosureButton>
 
@@ -126,10 +125,10 @@ const RecipeCard = ({ recipe, handleRecipeSelection, selectedRecipes, showSwitch
                                 className={`mt-2 px-4 pt-4 pb-2 text-sm leading-relaxed bg-gray-50 border border-gray-200 rounded-lg space-y-2 transition-all duration-300 ease-in-out ${open ? 'opacity-100 max-h-[500px]' : 'opacity-0 max-h-0'
                                     } overflow-hidden`}
                             >
-                                <div><strong>Tips:</strong> {recipe.additionalInformation.tips}</div>
-                                <div><strong>Variations:</strong> {recipe.additionalInformation.variations}</div>
-                                <div><strong>Serving Suggestions:</strong> {recipe.additionalInformation.servingSuggestions}</div>
-                                <div><strong>Nutritional Information:</strong> {recipe.additionalInformation.nutritionalInformation}</div>
+                                <div><strong>팁:</strong> {recipe.additionalInformation.tips}</div>
+                                <div><strong>변형:</strong> {recipe.additionalInformation.variations}</div>
+                                <div><strong>서빙 제안:</strong> {recipe.additionalInformation.servingSuggestions}</div>
+                                <div><strong>영양 정보:</strong> {recipe.additionalInformation.nutritionalInformation}</div>
                             </DisclosurePanel>
                         </>
                     )}

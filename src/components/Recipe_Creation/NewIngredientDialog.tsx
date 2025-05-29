@@ -17,29 +17,27 @@ interface NewIngredientDialogProps {
 }
 
 function NewIngredientDialog({ ingredientList, updateIngredientList }: NewIngredientDialogProps) {
-  const [isOpen, setIsOpen] = useState(false); // State to manage dialog visibility
-  const [ingredientName, setIngredientName] = useState(''); // State to manage the ingredient name input
-  const [isLoading, setIsLoading] = useState(false); // State to manage the loading state
-  const [message, setMessage] = useState(''); // State to manage feedback messages
-  const [isDisabled, setIsDisabled] = useState(false); // State to manage the disabled state of the submit button
+  const [isOpen, setIsOpen] = useState(false);
+  const [ingredientName, setIngredientName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [isDisabled, setIsDisabled] = useState(false);
 
   useEffect(() => {
     setIngredientName('');
     setMessage('');
-  }, [isOpen]); // Reset ingredient name and message when dialog is opened/closed
+  }, [isOpen]);
 
-  // Handle input change for the ingredient name
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIngredientName(e.target.value);
     setMessage('');
     setIsDisabled(false);
   };
 
-  // Handle form submission
   const handleSubmit = async () => {
     if (!ingredientName.trim()) return;
     if (ingredientName.trim().length > 20) {
-      setMessage('This ingredient name is too long!');
+      setMessage('재료 이름이 너무 깁니다!');
       setIsDisabled(true);
       return;
     }
@@ -53,7 +51,7 @@ function NewIngredientDialog({ ingredientList, updateIngredientList }: NewIngred
       availableIngredients.includes(singularizedIngredient);
 
     if (isAvailable) {
-      setMessage('This ingredient is already available');
+      setMessage('이미 등록된 재료입니다.');
       setIsDisabled(true);
       return;
     }
@@ -64,25 +62,25 @@ function NewIngredientDialog({ ingredientList, updateIngredientList }: NewIngred
       const { message: responseMessage, error } = response;
 
       if (error) {
-        throw new Error(error)
+        throw new Error(error);
       }
 
       if (responseMessage === 'Success') {
         const possibleSuggestions = response.suggested.join(', ');
-        setMessage(`Successfully added: ${response.newIngredient.name}${possibleSuggestions ? `\nAdditional suggestions: ${possibleSuggestions}` : ''}`);
+        setMessage(`성공적으로 추가되었습니다: ${response.newIngredient.name}${possibleSuggestions ? `\n추가 제안: ${possibleSuggestions}` : ''}`);
         updateIngredientList(response.newIngredient);
         setIngredientName('');
       } else if (responseMessage === 'Invalid') {
         const possibleSuggestions = response.suggested.join(', ');
-        setMessage(`${ingredientName} is invalid. ${possibleSuggestions ? `Try the following suggestions: ${possibleSuggestions}` : ''}`);
+        setMessage(`${ingredientName}은(는) 유효하지 않은 재료입니다.${possibleSuggestions ? `\n다음 제안을 시도해 보세요: ${possibleSuggestions}` : ''}`);
         setIngredientName('');
       } else {
-        setMessage(`An error occurred with validation... check back later: ${responseMessage}`);
+        setMessage(`검증 중 오류가 발생했습니다. 나중에 다시 시도해 주세요: ${responseMessage}`);
         setIngredientName('');
       }
     } catch (error) {
       console.error(error);
-      setMessage('Failed to add ingredient');
+      setMessage('재료 추가에 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
@@ -94,16 +92,16 @@ function NewIngredientDialog({ ingredientList, updateIngredientList }: NewIngred
         onClick={() => setIsOpen(true)}
         className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
         <PlusCircleIcon className="block mr-2 h-6 w-6" />
-        Add New Ingredient
+        새로운 재료 추가
       </Button>
       <Dialog open={isOpen} onClose={() => { }} className="relative z-50">
         <DialogBackdrop className="fixed inset-0 bg-black/50" />
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="max-w-lg space-y-4 border bg-white p-12 rounded-lg shadow-lg">
-            <DialogTitle className="text-xl font-bold">Add New Ingredient</DialogTitle>
-            <Description className="text-sm text-gray-500">If you can&apos;t find your ingredient in the list, enter its name here. We&apos;ll validate it before adding to the database.</Description>
+            <DialogTitle className="text-xl font-bold">새로운 재료 추가</DialogTitle>
+            <Description className="text-sm text-gray-500">목록에 원하는 재료가 없을 경우, 이름을 입력하세요. 데이터베이스에 추가하기 전 검증을 진행합니다.</Description>
             <Field className="mb-4">
-              <Label htmlFor="ingredientName" className="block text-sm font-medium text-gray-700">Ingredient Name</Label>
+              <Label htmlFor="ingredientName" className="block text-sm font-medium text-gray-700">재료 이름</Label>
               <Input
                 type="text"
                 id="ingredientName"
@@ -121,13 +119,13 @@ function NewIngredientDialog({ ingredientList, updateIngredientList }: NewIngred
             </div>
             {isLoading ? <Loading /> :
               <div className="flex gap-4 flex-end">
-                <Button className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400" onClick={() => setIsOpen(false)}>Cancel</Button>
+                <Button className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400" onClick={() => setIsOpen(false)}>취소</Button>
                 <Button
                   className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 data-[disabled]:bg-gray-200"
                   onClick={handleSubmit}
                   disabled={!ingredientName.trim() || isDisabled}
                 >
-                  Submit
+                  추가하기
                 </Button>
               </div>}
           </DialogPanel>

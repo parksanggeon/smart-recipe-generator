@@ -27,21 +27,21 @@ const ReviewComponent = ({
       style={{ width: '98%' }}
     >
       <div className="px-1 py-1">
-        {/* Enhanced Title */}
+        {/* 제목 */}
         <div className="text-center mb-6">
           <h2 className="text-2xl font-medium text-gray-800 sm:text-3xl">
-            Review Your Selections
+            선택 사항 검토
           </h2>
           {ingredients.length < 3 && (
             <p className="text-sm text-red-500 mt-2">
-              Please select at least 3 ingredients to proceed with recipe creation.
+              레시피 생성을 위해 최소 3개의 재료를 선택해주세요.
             </p>
           )}
         </div>
 
-        {/* Ingredients Section */}
+        {/* 재료 섹션 */}
         <div className="mb-6">
-          <h3 className="text-gray-700 font-semibold text-lg mb-2">{`${ingredients.length} Ingredient${ingredients.length !== 1 ? 's:' : ':'}`}</h3>
+          <h3 className="text-gray-700 font-semibold text-lg mb-2">{`${ingredients.length}개의 재료${ingredients.length !== 1 ? ':' : ':'}`}</h3>
           <ul
             className="flex flex-wrap gap-2 w-full sm:max-h-none sm:overflow-y-visible overflow-y-auto"
             style={{ maxHeight: height <= 800 ? '60px' : '150px' }}
@@ -62,10 +62,10 @@ const ReviewComponent = ({
           </ul>
         </div>
 
-        {/* Dietary Preferences Section */}
+        {/* 식단 선호도 섹션 */}
         <div className="mb-6">
           <h3 className="text-gray-700 font-semibold text-lg mb-2">
-            {`${dietaryPreference.length} Dietary Preference${dietaryPreference.length !== 1 ? 's:' : ':'}`}
+            {`${dietaryPreference.length}개의 식단 선호도${dietaryPreference.length !== 1 ? ':' : ':'}`}
           </h3>
           <div
             className="flex flex-wrap gap-2 overflow-y-auto"
@@ -82,9 +82,9 @@ const ReviewComponent = ({
           </div>
         </div>
 
-        {/* Buttons Section */}
+        {/* 버튼 섹션 */}
         <div className="flex justify-between mt-8">
-          {/* Edit Button */}
+          {/* 편집 버튼 */}
           <Button
             onClick={onEdit}
             className={`flex items-center justify-center bg-gray-200 text-gray-700 
@@ -93,16 +93,16 @@ const ReviewComponent = ({
                 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 
                 ${generatedRecipes.length ? 'cursor-not-allowed opacity-50' : ''}`}
             disabled={Boolean(generatedRecipes.length)}
-            aria-label="Edit your selections"
+            aria-label="선택 편집"
           >
             <PencilIcon
               className="w-4 h-4 mr-1 sm:w-5 sm:h-5 sm:mr-2"
               aria-hidden="true"
             />
-            <span className="text-sm sm:text-base">Edit</span>
+            <span className="text-sm sm:text-base">편집</span>
           </Button>
 
-          {/* Create Recipes Button */}
+          {/* 레시피 생성 버튼 */}
           <Button
             onClick={onSubmit}
             className={`flex items-center justify-center bg-green-600 text-white 
@@ -114,16 +114,15 @@ const ReviewComponent = ({
                 : ''
               }`}
             disabled={ingredients.length < 3 || Boolean(generatedRecipes.length)}
-            aria-label="Create recipes based on your selections"
+            aria-label="레시피 생성"
           >
-            <span className="text-sm sm:text-base">Create Recipes</span>
+            <span className="text-sm sm:text-base">레시피 생성</span>
             <ChevronRightIcon
               className="w-4 h-4 ml-1 sm:w-5 sm:h-5 sm:ml-2"
               aria-hidden="true"
             />
           </Button>
         </div>
-
 
       </div>
     </div>

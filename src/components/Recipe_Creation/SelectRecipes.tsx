@@ -12,19 +12,19 @@ const SelectRecipesComponent = ({ generatedRecipes, selectedRecipes, updateSelec
 
     const handleRecipeSelection = (recipeId: string) => {
         const updatedSelections = selectedRecipes.includes(recipeId)
-            ? selectedRecipes.filter((p) => p !== recipeId)
-            : [...selectedRecipes, recipeId];
+            ? selectedRecipes.filter((p) => p !== recipeId)  // 선택 해제
+            : [...selectedRecipes, recipeId];                 // 선택 추가
         updateSelectedRecipes(updatedSelections);
     };
 
     return (
         <div className="flex flex-col">
-            {/* Optional Helper Text */}
+            {/* 안내 문구 /}
             <p className="text-center text-gray-500 text-sm mb-4">
-                Use the switch on each recipe to select or unselect.
+                각 레시피의 스위치를 사용하여 선택하거나 선택 해제하세요.
             </p>
 
-            {/* Responsive Recipe Cards with Spacing */}
+            {/ 반응형 레시피 카드 그리드 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {generatedRecipes.map((recipe) => (
                     <div key={recipe.openaiPromptId}>

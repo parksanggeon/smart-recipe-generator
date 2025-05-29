@@ -10,11 +10,11 @@ import { call_api, getServerSidePropsUtility } from '../utils/utils';
 import { Ingredient, DietaryPreference, Recipe, IngredientDocumentType } from '../types/index';
 
 const steps = [
-  'Choose Ingredients',
-  'Choose Diet',
-  'Review and Create Recipes',
-  'Select Recipes',
-  'Review and Save Recipes',
+  '재료 선택',
+  '식단 선택',
+  '레시피 리뷰 및 생성',
+  '레시피 선택',
+  '레시피 리뷰 및 저장',
 ];
 
 const initialIngredients: Ingredient[] = [];
@@ -71,7 +71,6 @@ function Navigation({
         },
       });
 
-      // response 형태에 따라 recipes 배열 꺼내기
       let parsedRecipes: Recipe[] = [];
 
       if (
@@ -159,7 +158,7 @@ function Navigation({
           <div className="flex flex-col items-center">
             <div className="text-center">
               <h2 className="text-lg font-medium text-gray-800 sm:text-2xl md:text-3xl">
-                Step {step + 1}: {steps[step]}
+                {step + 1}단계: {steps[step]}
               </h2>
             </div>
 
@@ -169,10 +168,10 @@ function Navigation({
                 className={`flex items-center justify-center bg-gray-200 text-gray-700 rounded-full px-4 py-2 transition duration-300 ease-in-out hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 ${step === 0 ? 'cursor-not-allowed opacity-50' : ''}`}
                 onClick={() => updateStep(-1)}
                 disabled={step === 0}
-                aria-label="Go to previous step"
+                aria-label="이전 단계로 이동"
               >
                 <ChevronLeftIcon className="block mr-2 h-5 w-5" />
-                Prev
+                이전
               </button>
 
               <button
@@ -180,9 +179,9 @@ function Navigation({
                 className={`flex items-center justify-center bg-indigo-600 text-white rounded-full px-4 py-2 transition duration-300 ease-in-out hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${step === steps.length - 1 || (step === 2 && !generatedRecipes.length) ? 'cursor-not-allowed opacity-50' : ''}`}
                 onClick={() => updateStep(+1)}
                 disabled={step === steps.length - 1 || (step === 2 && !generatedRecipes.length)}
-                aria-label="Go to next step"
+                aria-label="다음 단계로 이동"
               >
-                Next
+                다음
                 <ChevronRightIcon className="block ml-2 h-5 w-5" />
               </button>
             </div>

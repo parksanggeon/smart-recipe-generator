@@ -39,14 +39,15 @@ const ReviewRecipesComponent = ({ generatedRecipes, selectedRecipes, handleRecip
                     <Button
                         onClick={() => handleRecipeSubmit(finalRecipes)}
                         className="flex items-center bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-                        aria-label="Submit selected recipes"
+                        aria-label="선택한 레시피 제출"
                     >
                         <CheckIcon className="w-5 h-5 mr-2" aria-hidden="true" />
-                        {`Submit Selected (${finalRecipes.length}) Recipes`}
+                        {`선택한 레시피 ${finalRecipes.length}개 제출`}
                     </Button>
                 ) : (
                     <div className="text-center text-red-500 font-medium px-4 py-3 rounded-lg bg-red-100">
-                        No recipes selected for submission. Please select at least one recipe. If you navigate away, all recipes will be discarded.
+                        제출할 레시피가 선택되지 않았습니다. 최소한 한 개 이상의 레시피를 선택해 주세요.  
+                        다른 페이지로 이동하면 모든 레시피가 삭제됩니다.
                     </div>
                 )}
             </div>

@@ -39,12 +39,11 @@ function IngredientList({ ingredientList, ingredientUpdate, generatedRecipes }: 
             );
 
     const handleSelectedIngredient = (ingredient: ComboIngredient) => {
-        // 안전하게 ingredient.name을 확인하고 처리
         if (ingredient && ingredient.name) {
             setSelectedIngredient(initialComboIngredient);
             ingredientUpdate(ingredient.name);
         } else {
-            console.error("Invalid ingredient:", ingredient); // ingredient가 잘못된 경우 오류 메시지 출력
+            console.error("Invalid ingredient:", ingredient);
         }
     };
 
@@ -63,7 +62,7 @@ function IngredientList({ ingredientList, ingredientUpdate, generatedRecipes }: 
                         )}
                         displayValue={(ingredient: ComboIngredient) => ingredient?.name}
                         onChange={(event) => setQuery(event.target.value)}
-                        placeholder="Select an existing ingredient"
+                        placeholder="기존 재료 선택" // 🔥 한글화: 기존 재료 선택
                     />
                     <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-3">
                         <ChevronDownIcon className="w-5 h-5 text-gray-400" aria-hidden="true" />
@@ -132,11 +131,11 @@ export default function IngredientForm({
             (i) => i.name.toLowerCase() === val.toLowerCase()
         );
         if (isRepeat) {
-            setError('This ingredient is already selected.');
+            setError('이 재료는 이미 선택되었습니다.'); // 🔥 한글화: 중복 선택
             return;
         }
         if (ingredients.length >= 10) {
-            setError('You can select up to 10 ingredients only.');
+            setError('최대 10개의 재료만 선택할 수 있습니다.'); // 🔥 한글화: 선택 제한
             return;
         }
         setError(null);
@@ -173,7 +172,7 @@ export default function IngredientForm({
             </div>
             {ingredients.length > 0 && (
                 <div className="mt-6 w-full">
-                    <h2 className="text-lg font-semibold text-indigo-600 mb-3">Selected Ingredients:</h2>
+                    <h2 className="text-lg font-semibold text-indigo-600 mb-3">선택된 재료:</h2> {/* 🔥 한글화: 재료 리스트 제목 */}
                     <div className="flex flex-wrap max-h-32 overflow-y-auto">
                         {ingredients.map((ingredient: Ingredient) => (
                             <Chip
